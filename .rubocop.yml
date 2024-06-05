@@ -1,0 +1,57 @@
+AllCops:
+  Exclude:
+    - bin/**/*
+    - Gemfile
+    - config/routes.rb
+    - test/**/*
+    - db/**/*
+  SuggestExtensions: false
+
+Documentation:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - config/environments/development.rb
+
+  Max: 100
+
+Style/StringLiterals:
+  Enabled: true
+  EnforcedStyle: double_quotes # hoặc xóa hoàn toàn tùy chọn này
+
+Style/MethodDefParentheses:
+  Enabled: false
+
+Style/PercentLiteralDelimiters:
+  Enabled: false
+
+Metrics/AbcSize:
+  Enabled: false
+
+Metrics/MethodLength:
+  Enabled: false
+
+Layout/IndentationWidth:
+  Enabled: true
+
+Style/CaseEquality:
+  Enabled: false
+
+Layout/TrailingWhitespace:
+  Enabled: false
+
+Style/StringLiteralsInInterpolation:
+  Enabled: false
+
+Naming/PredicateName:
+  Enabled: false
+
+Layout/EmptyLineAfterMagicComment:
+  Enabled: false
+
+Layout/LineLength:
+  Enabled: false
+
+Style/ClassVars:
+  Enabled: false
