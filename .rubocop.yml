@@ -55,3 +55,6 @@ Layout/LineLength:
 
 Style/ClassVars:
   Enabled: false
+
+Metrics/PerceivedComplexity:
+  Enabled: false

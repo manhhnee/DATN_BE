@@ -15,7 +15,7 @@ module Api
           attendances = Attendance.where(user_id:, date: start_date..end_date).order(:date, :time_check)
 
           total_salary = 0
-          attendances.group_by(&:date).each do |_, daily_attendances|
+          attendances.group_by(&:date).each_value do |daily_attendances|
             next unless daily_attendances.present?
 
             time_in = daily_attendances.first.time_check

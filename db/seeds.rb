@@ -4,7 +4,7 @@ require 'faker'
 attendance_seeds = []
 
 # Set current date
-current_date = Date.new(2024, 4, 20)
+current_date = Date.new(2024, 4, 21)
 
 # Define the range for random times
 time_range = (7..18).to_a

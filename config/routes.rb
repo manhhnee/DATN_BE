@@ -10,11 +10,24 @@
     namespace "v1" do
       resources :posts
       resources :users do
+        member do
+          put 'update_user'
+          put 'update_admin'
+        end
         resources :notes
-        resources :attendances, only: [:create]
+        resources :attendances, only: [:create, :index] do
+          collection do
+            get 'user_attendances'
+          end
+        end
       end
-      resources :attendances
+      resources :departments, only: [:index]
       resources :attendance_types
+      resources :salaries, only: [:index, :create] do
+        collection do
+          get 'total_work_hours_all_users'
+        end
+      end
       post "/login", to: "sessions#create"
       delete "/logout", to: "sessions#destroy"
       post '/calculate_salary', to: 'salary_calculator#calculate_salary'

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 class Note < ApplicationRecord
   belongs_to :user
 
@@ -5,5 +6,4 @@ class Note < ApplicationRecord
   validates :description, presence: true
   validates :label, presence: true
   validates :day, presence: true
-
 end

@@ -30,7 +30,7 @@ module Api
       # PATCH/PUT /api/v1/attendance_types/:id
       def update
         if @attendance_type.update(attendance_type_params)
-          render json: {attendance_type: @attendance_type, message: "Attendance type updated successfully"}, status: :ok
+          render json: { attendance_type: @attendance_type, message: "Attendance type updated successfully" }, status: :ok
         else
           render json: { error: @attendance_type.errors.full_messages }, status: :unprocessable_entity
         end
@@ -38,12 +38,12 @@ module Api
 
       # DELETE /api/v1/attendance_types/:id
       def destroy
-        begin
-          @attendance_type.destroy
-          render json: { message: "Attendance type deleted successfully" }, status: :ok
-        rescue => e
-          render json: { error: "Failed to delete Attendance type: #{e.message}" }, status: :internal_server_error
-        end
+        
+        @attendance_type.destroy
+        render json: { message: "Attendance type deleted successfully" }, status: :ok
+      rescue StandardError => e
+        render json: { error: "Failed to delete Attendance type: #{e.message}" }, status: :internal_server_error
+        
       end
 
       private

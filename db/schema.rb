@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_01_102721) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_07_072956) do
   create_table "active_storage_attachments", charset: "utf8mb3", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -83,6 +83,15 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_01_102721) do
     t.index ["user_id"], name: "index_notes_on_user_id"
   end
 
+  create_table "salaries", charset: "utf8mb3", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.date "date", null: false
+    t.decimal "total_salary", precision: 10, scale: 2, default: "0.0"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_salaries_on_user_id"
+  end
+
   create_table "users", charset: "utf8mb3", force: :cascade do |t|
     t.string "first_name"
     t.string "last_name"
@@ -103,5 +112,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_01_102721) do
   add_foreign_key "attendances", "users"
   add_foreign_key "face_data", "users"
   add_foreign_key "notes", "users"
+  add_foreign_key "salaries", "users"
   add_foreign_key "users", "departments"
 end
