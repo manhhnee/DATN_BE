@@ -35,8 +35,17 @@
 /config/master.key
 /config/face-recognition-426413-1260baff6373.json
 /config/database.yml
+public/*
+coverage/
+.rspec
 /node_modules
 /test
+
+config/settings.local.yml
+
+config/settings.local.yml
+config/settings/*.local.yml
+config/environments/*.local.yml
 
 /dataset
 /lfw_funneled
