@@ -44,3 +44,4 @@ face_recognition_cnn.keras
 app/python/history.npy
 app/python/history1.npy
 
+face-recognition.pem
