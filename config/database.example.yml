@@ -3,17 +3,17 @@ default: &default
   encoding: utf8
   pool: 5
   username: root
-  password: Manhcute@258
-  socket: /var/run/mysqld/mysqld.sock
+  password: your password
+  socket: your socket
 
 development:
   <<: *default
-  database: timekeeping_dev
+  database: your db
 
 test:
   <<: *default
-  database: timekeeping_test
+  database: your db
 
 production:
   <<: *default
-  database: timekeeping_product
+  database: your db

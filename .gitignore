@@ -34,6 +34,7 @@
 
 /config/master.key
 /config/face-recognition-426413-1260baff6373.json
+/config/database.yml
 /node_modules
 /test
 
