@@ -31,7 +31,9 @@
 /vendor
 
 # Ignore master key for decrypting credentials and more.
+
 /config/master.key
+/config/face-recognition-426413-1260baff6373.json
 /node_modules
 
 /dataset
@@ -41,3 +43,4 @@ app/python/face_recognition_resnet.keras
 face_recognition_cnn.keras
 app/python/history.npy
 app/python/history1.npy
+
