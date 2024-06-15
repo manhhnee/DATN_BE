@@ -10,8 +10,8 @@
 set :stage, :production
 set :rails_env, :production
 set :deploy_to, "/deploy/apps/DATN_BE"
-set :branch, :config_deploy
-server "52.77.241.90", user: "www", roles: %w(web app db)
+set :branch, :master
+server "13.213.44.80", user: "www", roles: %w(web app db)
 
 # role-based syntax
 # ==================
