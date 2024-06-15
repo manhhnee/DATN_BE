@@ -38,6 +38,8 @@ def load_dataset(dataset_dir, img_height=160, img_width=160):
 
 
 def plot_training_history(history, output_path='app/python/training_history.png'):
+    # Assuming the training history is saved in 'history.npy'
+    history = np.load('app/python/history.npy', allow_pickle=True).item()
     # Plot training & validation accuracy values
     plt.figure(figsize=(12, 4))
     plt.subplot(1, 2, 1)

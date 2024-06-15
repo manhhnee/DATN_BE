@@ -35,6 +35,9 @@
 /node_modules
 
 /dataset
+/lfw_funneled
 app/python/face_recognition_cnn.keras
+app/python/face_recognition_resnet.keras
 face_recognition_cnn.keras
 app/python/history.npy
+app/python/history1.npy

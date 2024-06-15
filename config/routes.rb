@@ -8,6 +8,7 @@
 
   namespace "api" do
     namespace "v1" do
+      post 'upload', to: 'upload#upload_file'
       resources :posts
       resources :users do
         member do
@@ -18,6 +19,7 @@
         resources :attendances, only: [:create, :index] do
           collection do
             get 'user_attendances'
+            post 'create_to_recognize', to: 'attendances#create_to_recognize'
           end
         end
       end

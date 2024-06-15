@@ -4,10 +4,10 @@ require 'faker'
 attendance_seeds = []
 
 # Set current date
-current_date = Date.new(2024, 4, 21)
+current_date = Date.new(2024, 6, 11)
 
 # Define the range for random times
-time_range = (7..18).to_a
+time_range = (1..10).to_a
 
 # Number of seed records to generate
 number_of_records = 5
@@ -22,16 +22,16 @@ number_of_records.times do
 
   attendance_seeds << {
     date: current_date,
-    user_id: 32,
-    attendance_type_id: 3,
+    user_id: 47,
+    attendance_type_id: 1,
     created_at: Time.now,
-    time_check: time_check.strftime('%H:%M:%S') # Format time_check as HH:MM:SS string
+    time_check: time_check.strftime('%H:%M:%S')
   }
 end
 
 # Insert seed data into the 'attendances' table
 attendance_seeds.each do |seed|
-  puts "Inserting seed: #{seed}" # Debugging statement
+  puts "Inserting seed: #{seed}"
   Attendance.create(seed)
 end
 

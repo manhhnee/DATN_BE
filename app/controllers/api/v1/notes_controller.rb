@@ -32,12 +32,10 @@ module Api
       end
 
       def destroy
-        
         @note.destroy
         render json: { message: "Note successfully deleted" }, status: :ok
       rescue StandardError => e
         render json: { error: "Failed to delete Note: #{e.message}" }, status: :internal_server_error
-        
       end
 
       private

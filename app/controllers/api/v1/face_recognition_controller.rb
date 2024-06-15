@@ -7,23 +7,31 @@ module Api
 
       def generate_dataset
         user_id = params[:user_id]
-        image_data = params[:image]
         frame = params[:frame]
+        image_data = params[:image]
 
         image_data = image_data.split(",")[1]
-        image = Base64.decode64(image_data)
 
-        File.open("tmp/#{user_id}_#{frame}.jpg", "wb") do |file|
-          file.write(image)
-        end
+        begin
+          command = "python3 app/python/generate_dataset.py #{user_id} #{frame} #{image_data}"
+          output, status = Open3.capture2(command)
 
-        command = "python3 app/python/generate_dataset.py #{user_id} #{frame}"
-        output, status = Open3.capture2(command)
+          output = output.strip
 
-        if status.success?
-          render json: { status: "success", message: "Dataset generated successfully", output: }
-        else
-          render json: { status: "error", message: "Failed to generate dataset", output: }
+          if status.success?
+            processed_file_path = Rails.root.join("dataset", "#{user_id}.#{output}.jpg")
+
+            # Upload file ảnh đã xử lý lên Google Cloud Storage
+            storage_service = GoogleCloudStorageService.new
+            public_url = storage_service.upload(processed_file_path.to_s, File.open(processed_file_path, "rb"))
+            File.delete(processed_file_path) if File.exist?(processed_file_path)
+
+            render json: { status: "success", message: "Dataset generated successfully", url: public_url, output: }
+          else
+            render json: { status: "error", message: "Failed to process dataset", output: }
+          end
+        rescue StandardError => e
+          render json: { status: "error", message: "Failed to generate dataset: #{e.message}" }
         end
       end
 

@@ -4,19 +4,19 @@ module Api
   module V1
     class UsersController < ApplicationController
       before_action :load_user, only: %i[show update_user update_admin destroy]
-      before_action :authorize_admin, only: %i[update_admin destroy index]
+      before_action :authorize_admin, only: %i[update_admin create destroy index]
       before_action :authorize_user, only: %i[show update_user]
 
       def index
         @users = User.order("created_at DESC")
         render json: {
           status: true,
-          data: @users.map { |user| user.as_json(only: %i[id first_name last_name phone_number date_of_birth email role department_id], methods: [:avatar_url]) }
+          data: @users.map { |user| user.as_json(only: %i[id first_name last_name phone_number date_of_birth email role department_id basic_salary], methods: [:avatar_url]) }
         }, status: :ok
       end
 
       def show
-        user_data = @user.as_json(only: %i[id first_name last_name phone_number date_of_birth email role department_id])
+        user_data = @user.as_json(only: %i[id first_name last_name phone_number date_of_birth email role department_id basic_salary])
         user_data[:avatar_url] = @user.avatar_url if @user.avatar.attached?
         render json: { status: true, data: user_data }, status: :ok
       end
@@ -29,7 +29,7 @@ module Api
           @user.avatar.attach(params[:avatar]) if params[:avatar].present?
 
           if @user.save
-            user_data = @user.as_json(only: %i[id first_name last_name phone_number date_of_birth email role department_id])
+            user_data = @user.as_json(only: %i[id first_name last_name phone_number date_of_birth email role department_id basic_salary])
             user_data[:avatar_url] = @user.avatar_url if @user.avatar.attached?
             render json: { user: user_data, message: "User created successfully" }, status: :created
           else
@@ -70,7 +70,7 @@ module Api
       private
 
       def user_params
-        params.permit(:first_name, :last_name, :phone_number, :date_of_birth, :email, :password, :department_id)
+        params.permit(:first_name, :last_name, :phone_number, :date_of_birth, :email, :password, :department_id, :basic_salary)
       end
 
       def user_update_params

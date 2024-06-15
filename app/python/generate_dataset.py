@@ -1,10 +1,11 @@
 import cv2
 import mysql.connector
 import sys
-import os
+import base64
+import numpy as np
 
 
-def generate_dataset(user_id, frame):
+def generate_dataset(user_id, frame, image_data):
     face_classifier = cv2.CascadeClassifier(
         "/home/manh/Documents/Workspace/DATN/DATN/resources/haarcascade_frontalface_alt.xml")
 
@@ -17,11 +18,12 @@ def generate_dataset(user_id, frame):
             cropped_face = img[y:y + h, x:x + w]
         return cropped_face
 
-    # Read the temporary saved image
-    img_path = f"tmp/{user_id}_{frame}.jpg"
-    img = cv2.imread(img_path)
+    # Decode image from base64
+    img_data = base64.b64decode(image_data)
+    np_arr = np.frombuffer(img_data, np.uint8)
+    img = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
     if img is None:
-        print("Error: Could not read the image.")
+        print("Error: Could not decode the image.")
         return
 
     mydb = mysql.connector.connect(
@@ -31,7 +33,7 @@ def generate_dataset(user_id, frame):
         database="timekeeping_dev"
     )
     mycursor = mydb.cursor()
-    mycursor.execute("select ifnull(max(id), 0) from face_data")
+    mycursor.execute("SELECT IFNULL(MAX(id), 0) FROM face_data")
     row = mycursor.fetchone()
     lastid = row[0]
 
@@ -44,22 +46,22 @@ def generate_dataset(user_id, frame):
         file_name_path = f"dataset/{user_id}.{img_id}.jpg"
         cv2.imwrite(file_name_path, face)
 
-        mycursor.execute("""INSERT INTO `face_data` (`id`, `user_id`) VALUES
-                            ('{}', '{}')""".format(img_id, user_id))
+        mycursor.execute(
+            "INSERT INTO `face_data` (`id`, `user_id`) VALUES (%s, %s)", (img_id, user_id))
         mydb.commit()
 
     mycursor.close()
     mydb.close()
-    os.remove(img_path)
-    print(f"Frame {frame}: Dataset generated successfully.")
+    print(f"{img_id}")
 
 
 if __name__ == "__main__":
-    if len(sys.argv) > 2:
+    if len(sys.argv) > 3:
         user_id = sys.argv[1]
         frame = sys.argv[2]
+        image_data = sys.argv[3]
     else:
-        print("No user_id or frame provided as command-line argument")
+        print("No user_id, frame or image_data provided as command-line argument")
         sys.exit(1)
 
-    generate_dataset(user_id, frame)
+    generate_dataset(user_id, frame, image_data)

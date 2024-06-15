@@ -71,3 +71,9 @@ gem "active_storage_validations", "0.9.8"
 gem 'rack-cors', require: 'rack/cors'
 gem 'mini_magick'
 gem 'pycall'
+gem 'google-cloud-storage'
+gem "capistrano"
+gem "capistrano3-puma"
+gem "capistrano-rails", require: false
+gem "capistrano-bundler", require: false
+gem "capistrano-rvm"

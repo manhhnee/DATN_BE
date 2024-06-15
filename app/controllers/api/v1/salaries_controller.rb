@@ -12,9 +12,13 @@ module Api
 
       def create
         user_id = salary_params[:user_id]
+        user = User.find_by(id: user_id)
+
+        return render json: { error: "User not found" }, status: :not_found unless user
+
+        basic_salary = user.basic_salary
 
         existing_salaries = Salary.where(user_id:)
-
         existing_salaries.destroy_all if existing_salaries.present?
 
         12.times do |i|
@@ -32,7 +36,7 @@ module Api
             time_out = daily_attendances.last.time_check
 
             work_hours = calculate_work_hours(time_in, time_out)
-            total_salary += calculate_monthly_salary(work_hours)
+            total_salary += calculate_monthly_salary(work_hours, basic_salary)
           end
 
           Salary.create!(user_id:, date:, total_salary:)
@@ -80,24 +84,24 @@ module Api
       end
 
       def calculate_work_hours(time_in, time_out)
-        time_in = Time.new(time_in.year, time_in.month, time_in.day, 8, 0, 0) if time_in.hour < 8
+        time_in = Time.new(time_in.year, time_in.month, time_in.day, 1, 0, 0) if time_in.hour < 1
 
-        work_end_time = Time.new(time_out.year, time_out.month, time_out.day, 17, 0, 0)
-        limited_time_out = time_out.hour < 17 ? time_out : [time_out, work_end_time].min
+        work_end_time = Time.new(time_out.year, time_out.month, time_out.day, 9, 0, 0)
+        limited_time_out = time_out.hour < 9 ? time_out : [time_out, work_end_time].min
 
         hours_worked = limited_time_out.hour - time_in.hour
-        hours_worked -= 1 if time_in.hour < 13 && limited_time_out.hour > 12
+        hours_worked -= 1 if time_in.hour < 5 && limited_time_out.hour > 4
         minutes_worked = limited_time_out.min - time_in.min
         total_hours_worked = hours_worked + (minutes_worked / 60.0)
 
         total_hours_worked.round(2)
       end
 
-      def calculate_monthly_salary(work_hours)
+      def calculate_monthly_salary(work_hours, basic_salary)
         if work_hours >= 4
-          work_hours * 300_000
+          work_hours * basic_salary
         else
-          work_hours * 300_000 * 0.8
+          work_hours * basic_salary * 0.8
         end
       end
     end

@@ -3,11 +3,11 @@ module Api
   module V1
     class AttendancesController < ApplicationController
       before_action :set_attendance, only: %i[show update destroy]
-      before_action :authorize_admin, except: %i[create user_attendances]
+      before_action :authorize_admin, except: %i[create user_attendances create_to_recognize]
       before_action :authorize_user, only: %i[create user_attendances]
 
       def index
-        user = User.find(params[:user_id])
+        user = User.find_by(id: params[:user_id])
         attendances_by_date = user.attendances.group_by(&:date)
 
         attendance_times_by_date = {}
@@ -28,6 +28,16 @@ module Api
 
       def create
         @attendance = current_user.attendances.build(attendance_params)
+        if @attendance.save
+          render json: @attendance, status: :created
+        else
+          render json: @attendance.errors, status: :unprocessable_entity
+        end
+      end
+
+      def create_to_recognize
+        user = User.find_by(id: params[:user_id])
+        @attendance = user.attendances.build(attendance_params)
         if @attendance.save
           render json: @attendance, status: :created
         else
@@ -85,13 +95,13 @@ module Api
       end
 
       def calculate_work_hours(time_in, time_out)
-        time_in = Time.new(time_in.year, time_in.month, time_in.day, 8, 0, 0) if time_in.hour < 8
+        time_in = Time.new(time_in.year, time_in.month, time_in.day, 1, 0, 0) if time_in.hour < 1
 
-        work_end_time = Time.new(time_out.year, time_out.month, time_out.day, 17, 0, 0)
-        limited_time_out = time_out.hour < 17 ? time_out : [time_out, work_end_time].min
+        work_end_time = Time.new(time_out.year, time_out.month, time_out.day, 9, 0, 0)
+        limited_time_out = time_out.hour < 9 ? time_out : [time_out, work_end_time].min
 
         hours_worked = limited_time_out.hour - time_in.hour
-        hours_worked -= 1 if time_in.hour < 13 && limited_time_out.hour > 12
+        hours_worked -= 1 if time_in.hour < 5 && limited_time_out.hour > 4
         minutes_worked = limited_time_out.min - time_in.min
         total_hours_worked = hours_worked + (minutes_worked / 60.0)
 
