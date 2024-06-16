@@ -47,7 +47,16 @@ module Api
       end
 
       def recognize
-        command = "myenv/bin/python3 app/python/recognize.py"
+        image_data = params[:image]
+        image_path = "tmp/recognize.jpg"
+
+        # Decode the base64 image data and save it to a file
+        File.open(image_path, "wb") do |file|
+          file.write(Base64.decode64(image_data.split(",")[1]))
+        end
+
+        # Construct the command with the correct image_path
+        command = "myenv/bin/python3 app/python/recognize.py #{image_path}"
         output, status = Open3.capture2(command)
 
         if status.success?
