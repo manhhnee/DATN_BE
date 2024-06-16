@@ -40,12 +40,14 @@ coverage/
 .rspec
 /node_modules
 /test
+myenv/
 
 config/settings.local.yml
 
 config/settings.local.yml
 config/settings/*.local.yml
 config/environments/*.local.yml
+
 
 /dataset
 /lfw_funneled
