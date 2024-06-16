@@ -11,7 +11,7 @@ set :stage, :production
 set :rails_env, :production
 set :deploy_to, "/deploy/apps/DATN_BE"
 set :branch, :master
-server "13.229.113.176", user: "www", roles: %w(web app db)
+server "18.141.145.93", user: "www", roles: %w(web app db)
 
 # role-based syntax
 # ==================
