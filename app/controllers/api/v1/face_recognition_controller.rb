@@ -13,7 +13,7 @@ module Api
         image_data = image_data.split(",")[1]
 
         begin
-          command = "python3 app/python/generate_dataset.py #{user_id} #{frame} #{image_data}"
+          command = "myenv/bin/python3 app/python/generate_dataset.py #{user_id} #{frame} #{image_data}"
           output, status = Open3.capture2(command)
 
           output = output.strip
@@ -47,7 +47,7 @@ module Api
       end
 
       def recognize
-        command = "python3 app/python/recognize.py"
+        command = "myenv/bin/python3 app/python/recognize.py"
         output, status = Open3.capture2(command)
 
         if status.success?
