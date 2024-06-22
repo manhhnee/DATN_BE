@@ -11,7 +11,6 @@ class Api::V1::UploadController < ApplicationController
     end
 
     storage_service = GoogleCloudStorageService.new
-    byebug
 
     begin
       public_url = storage_service.upload(file_path, File.open(file_path, "rb"))

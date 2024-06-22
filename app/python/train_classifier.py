@@ -10,7 +10,6 @@ from tensorflow.keras.applications.resnet import preprocess_input
 from PIL import Image
 import random
 
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
 os.environ['PROTOCOL_BUFFERS_PYTHON_IMPLEMENTATION'] = 'python'
 
 

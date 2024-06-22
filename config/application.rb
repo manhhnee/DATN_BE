@@ -34,6 +34,8 @@ module Datn
 
     config.load_defaults 6.1
 
+    config.time_zone = "UTC"
+
     config.middleware.insert_before 0, Rack::Cors do
       allow do
         origins "*"

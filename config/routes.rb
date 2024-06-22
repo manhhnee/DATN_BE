@@ -16,6 +16,11 @@
           put 'update_admin'
         end
         resources :notes
+        resources :reports, only: [:create, :index] do
+          member do
+            put 'approve'
+          end
+        end
         resources :attendances, only: [:create, :index] do
           collection do
             get 'user_attendances'
@@ -23,6 +28,16 @@
           end
         end
       end
+      resources :reports, only: [] do
+        collection do
+          get 'pending_reports'
+        end
+        member do
+          put 'approve'
+          put 'reject'
+        end
+      end
+      resources :attendances, only: [:show, :update, :destroy]
       resources :departments, only: [:index]
       resources :attendance_types
       resources :salaries, only: [:index, :create] do
@@ -30,6 +45,7 @@
           get 'total_work_hours_all_users'
         end
       end
+      resources :holidays, only: [:index, :show, :create, :destroy]
       post "/login", to: "sessions#create"
       delete "/logout", to: "sessions#destroy"
       post '/calculate_salary', to: 'salary_calculator#calculate_salary'

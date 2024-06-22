@@ -43,13 +43,14 @@ coverage/
 myenv/
 
 config/settings.local.yml
-
+.byebug_history
 config/settings.local.yml
 config/settings/*.local.yml
 config/environments/*.local.yml
 
 
 /dataset
+/Testdata
 /lfw_funneled
 app/python/face_recognition_cnn.keras
 app/python/face_recognition_resnet.keras

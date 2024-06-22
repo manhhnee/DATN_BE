@@ -3,7 +3,7 @@ module Api
   module V1
     class AttendanceTypesController < ApplicationController
       before_action :set_attendance_type, only: %i[show update destroy]
-      before_action :authorize_admin
+      before_action :authorize_admin, only: %i[create update destroy]
 
       # GET /api/v1/attendance_types
       def index
@@ -38,12 +38,12 @@ module Api
 
       # DELETE /api/v1/attendance_types/:id
       def destroy
-        
+
         @attendance_type.destroy
         render json: { message: "Attendance type deleted successfully" }, status: :ok
       rescue StandardError => e
         render json: { error: "Failed to delete Attendance type: #{e.message}" }, status: :internal_server_error
-        
+
       end
 
       private

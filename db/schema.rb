@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_06_11_043636) do
+ActiveRecord::Schema[7.1].define(version: 2024_06_22_041626) do
   create_table "active_storage_attachments", charset: "utf8mb3", force: :cascade do |t|
     t.string "name", null: false
     t.string "record_type", null: false
@@ -83,6 +83,19 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_11_043636) do
     t.index ["user_id"], name: "index_notes_on_user_id"
   end
 
+  create_table "reports", charset: "utf8mb3", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.date "date", null: false
+    t.bigint "attendance_type_id", null: false
+    t.time "time_check"
+    t.boolean "approved", default: false
+    t.string "reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["attendance_type_id"], name: "index_reports_on_attendance_type_id"
+    t.index ["user_id"], name: "index_reports_on_user_id"
+  end
+
   create_table "salaries", charset: "utf8mb3", force: :cascade do |t|
     t.bigint "user_id", null: false
     t.date "date", null: false
@@ -113,6 +126,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_06_11_043636) do
   add_foreign_key "attendances", "users"
   add_foreign_key "face_data", "users"
   add_foreign_key "notes", "users"
+  add_foreign_key "reports", "attendance_types"
+  add_foreign_key "reports", "users"
   add_foreign_key "salaries", "users"
   add_foreign_key "users", "departments"
 end

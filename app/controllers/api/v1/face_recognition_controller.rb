@@ -10,8 +10,6 @@ module Api
         frame = params[:frame]
         image_data = params[:image]
 
-        image_data = image_data.split(",")[1]
-
         begin
           command = "myenv/bin/python3 app/python/generate_dataset.py #{user_id} #{frame} #{image_data}"
           output, status = Open3.capture2(command)
@@ -21,10 +19,9 @@ module Api
           if status.success?
             processed_file_path = Rails.root.join("dataset", "#{user_id}.#{output}.jpg")
 
-            # Upload file ảnh đã xử lý lên Google Cloud Storage
             storage_service = GoogleCloudStorageService.new
             public_url = storage_service.upload(processed_file_path.to_s, File.open(processed_file_path, "rb"))
-            File.delete(processed_file_path) if File.exist?(processed_file_path)
+            # File.delete(processed_file_path) if File.exist?(processed_file_path)
 
             render json: { status: "success", message: "Dataset generated successfully", url: public_url, output: }
           else

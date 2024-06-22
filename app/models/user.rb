@@ -6,6 +6,7 @@ class User < ApplicationRecord
   has_many :attendances, dependent: :destroy
   has_many :face_data, class_name: "FaceDatum", dependent: :destroy
   has_many :notes, dependent: :destroy
+  has_many :reports, dependent: :destroy
 
   validates :email, presence: true, uniqueness: true
   validates :first_name, presence: true

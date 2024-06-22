@@ -22,7 +22,7 @@ number_of_records.times do
 
   attendance_seeds << {
     date: current_date,
-    user_id: 47,
+    user_id: 44,
     attendance_type_id: 1,
     created_at: Time.now,
     time_check: time_check.strftime('%H:%M:%S')
@@ -36,3 +36,16 @@ attendance_seeds.each do |seed|
 end
 
 puts "Seed data inserted successfully!"
+
+# db/seeds.rb
+
+# Holiday.create!([
+#   { holiday_date: Date.new(2024, 1, 1), description: "Tết Dương Lịch" },
+#   { holiday_date: Date.new(2024, 4, 18), description: "Giỗ Tổ Hùng Vương" },
+#   { holiday_date: Date.new(2024, 4, 30), description: "Ngày Giải Phóng Miền Nam" },
+#   { holiday_date: Date.new(2024, 5, 1), description: "Ngày Quốc Tế Lao Động" },
+#   { holiday_date: Date.new(2024, 9, 2), description: "Ngày Quốc Khánh" },
+#   { holiday_date: Date.new(2024, 9, 3), description: "Ngày Quốc Khánh (Nghỉ bù)" },
+# ])
+
+# puts "Holidays seeded!"

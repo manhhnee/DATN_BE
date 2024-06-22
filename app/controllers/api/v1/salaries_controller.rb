@@ -35,8 +35,8 @@ module Api
             time_in = daily_attendances.first.time_check
             time_out = daily_attendances.last.time_check
 
-            work_hours = calculate_work_hours(time_in, time_out)
-            total_salary += calculate_monthly_salary(work_hours, basic_salary)
+            regular_hours, overtime_hours = calculate_work_hours(time_in, time_out)
+            total_salary += calculate_monthly_salary(regular_hours, overtime_hours, basic_salary, daily_attendances.first.date)
           end
 
           Salary.create!(user_id:, date:, total_salary:)
@@ -54,14 +54,14 @@ module Api
         total_work_hours_by_user = Hash.new(0)
 
         attendances_by_date.each_value do |attendances|
-          # Group the attendances by user_id for the current date
           attendances_by_user = attendances.group_by(&:user_id)
 
           attendances_by_user.each do |user_id, user_attendances|
             time_check_in = user_attendances.min_by(&:time_check).time_check
             time_check_out = user_attendances.max_by(&:time_check).time_check
 
-            total_work_hours_by_user[user_id] += calculate_work_hours(time_check_in, time_check_out)
+            regular_hours, overtime_hours = calculate_work_hours(time_check_in, time_check_out)
+            total_work_hours_by_user[user_id] += regular_hours + overtime_hours
           end
         end
 
@@ -71,7 +71,7 @@ module Api
         top_six_users_with_names = top_six_users.map do |user_id, total_hours|
           user_info = user_names.find { |info| info[0] == user_id }
           full_name = user_info ? "#{user_info[1]} #{user_info[2]}" : "Unknown User"
-          [full_name, total_hours]
+          [full_name, total_hours.round(2)]
         end
 
         render json: { total_work_hours_by_user: top_six_users_with_names.to_h }
@@ -84,25 +84,56 @@ module Api
       end
 
       def calculate_work_hours(time_in, time_out)
-        time_in = Time.new(time_in.year, time_in.month, time_in.day, 1, 0, 0) if time_in.hour < 1
+        time_in = time_in.in_time_zone(Time.zone)
+        time_out = time_out.in_time_zone(Time.zone)
 
-        work_end_time = Time.new(time_out.year, time_out.month, time_out.day, 9, 0, 0)
-        limited_time_out = time_out.hour < 9 ? time_out : [time_out, work_end_time].min
+        if time_in.hour > 10
+          total_regular_hours = 0
+          overtime_hours = 0
+        else
+          time_in = Time.zone.local(time_in.year, time_in.month, time_in.day, 1, 0, 0) if time_in.hour < 1
 
-        hours_worked = limited_time_out.hour - time_in.hour
-        hours_worked -= 1 if time_in.hour < 5 && limited_time_out.hour > 4
-        minutes_worked = limited_time_out.min - time_in.min
-        total_hours_worked = hours_worked + (minutes_worked / 60.0)
+          regular_work_end_time = Time.zone.local(time_out.year, time_out.month, time_out.day, 10, 0, 0)
+          limited_time_out = time_out.hour < 10 ? time_out : [time_out, regular_work_end_time].min
 
-        total_hours_worked.round(2)
+          regular_hours_worked = limited_time_out.hour - time_in.hour
+          regular_hours_worked -= 1 if time_in.hour < 6 && limited_time_out.hour > 5
+          regular_minutes_worked = limited_time_out.min - time_in.min
+          total_regular_hours = regular_hours_worked + (regular_minutes_worked / 60.0)
+
+          overtime_hours = if time_out > regular_work_end_time
+                             ((time_out - regular_work_end_time) / 3600.0).round(2)
+                           else
+                             0
+                           end
+        end
+
+        [total_regular_hours.round(2), overtime_hours.round(2)]
       end
 
-      def calculate_monthly_salary(work_hours, basic_salary)
-        if work_hours >= 4
-          work_hours * basic_salary
-        else
-          work_hours * basic_salary * 0.8
-        end
+      def calculate_monthly_salary(regular_hours, overtime_hours, basic_salary, date)
+        multiplier = if is_holiday?(date)
+                       3.0
+                     elsif is_weekend?(date)
+                       2.0
+                     elsif regular_hours < 8.0
+                       0.8
+                     else
+                       0.0
+                     end
+
+        regular_salary = regular_hours * basic_salary * multiplier
+        overtime_salary = overtime_hours * basic_salary * 1.5
+
+        regular_salary + overtime_salary
+      end
+
+      def is_weekend?(date)
+        date.saturday? || date.sunday?
+      end
+
+      def is_holiday?(date)
+        Holiday.exists?(holiday_date: date)
       end
     end
   end
