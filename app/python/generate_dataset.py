@@ -26,33 +26,14 @@ def generate_dataset(user_id, frame, image_data):
         print("Error: Could not decode the image.")
         return
 
-    mydb = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        passwd="Manhcute@258",
-        database="timekeeping_dev"
-    )
-    mycursor = mydb.cursor()
-    mycursor.execute("SELECT IFNULL(MAX(id), 0) FROM face_data")
-    row = mycursor.fetchone()
-    lastid = row[0]
+    print(frame)
 
-    img_id = lastid + 1
+    if face_cropped(img) is not None:
+        face = cv2.resize(face_cropped(img), (200, 200))
+        face = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
 
-    cropped_face = face_cropped(img)
-    if cropped_face is not None:
-        face = cv2.resize(cropped_face, (200, 200))
-
-        file_name_path = f"dataset/{user_id}.{img_id}.jpg"
+        file_name_path = f"dataset/{user_id}.{frame}.jpg"
         cv2.imwrite(file_name_path, face)
-
-        mycursor.execute(
-            "INSERT INTO `face_data` (`id`, `user_id`) VALUES (%s, %s)", (img_id, user_id))
-        mydb.commit()
-
-    mycursor.close()
-    mydb.close()
-    print(f"{img_id}")
 
 
 if __name__ == "__main__":
