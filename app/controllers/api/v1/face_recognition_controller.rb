@@ -18,12 +18,7 @@ module Api
 
           if status.success?
             processed_file_path = Rails.root.join("dataset", "#{user_id}.#{output}.jpg")
-
-            storage_service = GoogleCloudStorageService.new
-            public_url = storage_service.upload(processed_file_path.to_s, File.open(processed_file_path, "rb"))
-            # File.delete(processed_file_path) if File.exist?(processed_file_path)
-
-            render json: { status: "success", message: "Dataset generated successfully", url: public_url, output: }
+            render json: { status: "success", message: "Dataset generated successfully", file_path: processed_file_path.to_s, output: }
           else
             render json: { status: "error", message: "Failed to process dataset", output: }
           end

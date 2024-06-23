@@ -39,9 +39,9 @@ def generate_dataset(user_id, frame, image_data):
 
     img_id = lastid + 1
 
-    if face_cropped(img) is not None:
-        face = cv2.resize(face_cropped(img), (200, 200))
-        face = cv2.cvtColor(face, cv2.COLOR_BGR2GRAY)
+    cropped_face = face_cropped(img)
+    if cropped_face is not None:
+        face = cv2.resize(cropped_face, (200, 200))
 
         file_name_path = f"dataset/{user_id}.{img_id}.jpg"
         cv2.imwrite(file_name_path, face)
